@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM Template for serverless-app
+
+Globals:
+  Function:
+    Timeout: 30
+
+Params:
+  LOCAL_FLAG:
+    Type: Boolean
+    Default: false
+  TABLE_NAME:
+    Type: String
+
+Resources:
+  GetDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/get_data
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      FunctionName: serverless-local-GetDataFunction
+      Role: !GetAtt GettDataFunctionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetData:
+          Type: Api
+          Properties:
+            Path: /get
+            Method: get
+      Environment:
+        Variables:
+          LOCAL_FLAG: false
+          TABLE_NAME: !Ref DynamoDBTable
+      Tags:
+        CloudFormation: true
+  GetDataFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: serverless-local-GetDataFunctionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action: "sts:AssumeRole"
+            Principal:
+              Service: lambda.amazonaws.com
+      Policies:
+        - PolicyName: "serverless-local-GetDataFunction"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "dynamodb:GetItem"
+                Resource: !GetAtt DynamoDBTable.Arn
+      Tags:
+        - Key: CloudFormation
+          Value: true
+  PutDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/put_data
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      FunctionName: serverless-local-PutDataFunction
+      Role: !GetAtt PutDataFunctionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        PutData:
+          Type: Api
+          Properties:
+            Path: /put
+            Method: put
+      Environment:
+        Variables:
+          LOCAL_FLAG: !Ref
+          TABLE_NAME: !Ref DynamoDBTable
+      Tags:
+        CloudFormation: true
+  PutDataFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: serverless-local-PutDataFunctionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action: "sts:AssumeRole"
+            Principal:
+              Service: lambda.amazonaws.com
+      Policies:
+        - PolicyName: "serverless-local-PutDataFunction"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "dynamodb:PutItem"
+                Resource: !GetAtt DynamoDBTable.Arn
+      Tags:
+        - Key: CloudFormation
+          Value: true
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: ID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: ID
+          KeyType: HASH
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 3
+        WriteCapacityUnits: 3
+      TableName: serverless-local-table
+      Tags:
+        - Key: CloudFormation
+          Value: true
