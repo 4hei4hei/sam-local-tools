@@ -109,10 +109,10 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        - AttributeName: ID
+        - AttributeName: Name
           AttributeType: S
       KeySchema:
-        - AttributeName: ID
+        - AttributeName: Name
           KeyType: HASH
       BillingMode: PROVISIONED
       ProvisionedThroughput:

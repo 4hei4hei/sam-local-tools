@@ -2,6 +2,7 @@ import boto3
 import datetime
 import json
 import os
+import sys
 from logging import getLogger, StreamHandler, DEBUG
 
 logger = getLogger(__name__)
@@ -24,14 +25,15 @@ table = dynamodb.Table(table_name)
 
 
 def lambda_handler(event, context):
-    if "ID" in event["headers"] or "id" in event["headers"]:
-        id = str(event["headers"]["ID"])
+    logger.info(event)
+    if "Name" in event["headers"]:
+        name = event["headers"]["Name"]
     else:
-        logger.info("Specific header is not found. Default value is set.")
-        id = "1"
+        logger.info("Specific header is not found.")
+        sys.exit()
 
     item = {
-        "ID": id,
+        "Name": name,
         "Time": str(datetime.datetime.now()),
     }
     resp = table.put_item(Item=item)
@@ -40,7 +42,7 @@ def lambda_handler(event, context):
         "statusCode": 200,
         "body": json.dumps(
             {
-                "message": "put item",
+                "message": "put_item finished!!",
             }
         ),
     }
