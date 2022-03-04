@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "serverless-local"
+name = "sam-local-tools"
 version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]

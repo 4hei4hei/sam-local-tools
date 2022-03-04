@@ -1,6 +1,8 @@
-# serverless-local
+# sam-local-tools
 
 DynamoDB-local と AWS SAM をローカルで実行するための環境を用意します
+
+ツールを利用するための各コマンドは Python の invoke で、タスクとして実行できるようになっています
 
 ## Requirements
 
@@ -8,12 +10,20 @@ DynamoDB-local と AWS SAM をローカルで実行するための環境を用�
 - aws-sam-cli = ^1.37.0
 - awscli = ^1.22.54
 
+以上のツールは poetry で利用できるようになっています
+
 ## Usage
 
 1. コンテナ環境を準備
 
 ```
 sh init.sh
+```
+
+or
+
+```
+poetry run invoke init
 ```
 
 このスクリプトで DynamoDB-local イメージのコンテナが作成されます
@@ -25,7 +35,13 @@ sh init.sh
 - ビルド
 
 ```
-poetry run sam build -t app/template.yaml
+poetry run sam build -p -t app/template.yaml
+```
+
+or
+
+```
+poetry run invoke build
 ```
 
 `Build Succeeded`と表示されれば実行可能な状態となっています
@@ -33,7 +49,13 @@ poetry run sam build -t app/template.yaml
 - ローカル実行
 
 ```
-poetry run sam local start-api --env-vars app/env.json --docker-network serverless-local_lambda-local
+poetry run sam local start-api --env-vars app/env.json --docker-network sam-local-tools_sam-local-tools
+```
+
+or
+
+```
+poetry run invoke start
 ```
 
 `yyyy-mm-dd hh:mm:ss * Running on http://127.0.0.1:3000/ (Press CTRL+C to quit)`となればリクエスト受付状態となっています
@@ -72,6 +94,12 @@ Date: Sat, 12 Feb 2022 10:53:56 GMT
 
 ```
 sh delete.sh
+```
+
+or
+
+```
+poetry run invoke delete
 ```
 
 以上のスクリプトで DynamoDB 情報とコンテナの削除を行います
