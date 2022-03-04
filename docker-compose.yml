@@ -11,7 +11,7 @@ services:
     volumes:
       - ./resource/data:/data
     networks:
-      - lambda-local
+      - sam-local-tools
 networks:
-  lambda-local:
+  sam-local-tools:
     driver: bridge
