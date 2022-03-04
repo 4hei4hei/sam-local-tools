@@ -24,5 +24,5 @@ def build(c):
 def start(c):
     build(c)
     invoke.run(
-        "poetry run sam local start-api --env-vars app/env.json --docker-network serverless-local_lambda-local"
+        "poetry run sam local start-api --env-vars app/env.json --docker-network sam-local-tools_sam-local-tools"
     )
